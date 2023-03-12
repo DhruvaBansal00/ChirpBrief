@@ -19,5 +19,5 @@ def return_search_results(query_text):
     return driver
 
 
-driver = return_search_results("Dhruva Bansal?")
-print(driver.page_source)
+# driver = return_search_results("Dhruva Bansal?")
+# print(driver.page_source)
