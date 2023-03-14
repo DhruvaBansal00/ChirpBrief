@@ -71,6 +71,7 @@ def get_all_topics_from_trending(tab_name: str = "trending"):
             (By.CSS_SELECTOR, "[aria-label='Timeline: Explore']")
         )
     )
+    time.sleep(5)
 
     bs = BeautifulSoup(driver.page_source)
     all_relevant_queries = bs.find_all(
