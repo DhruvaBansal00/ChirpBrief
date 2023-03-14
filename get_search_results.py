@@ -1,3 +1,5 @@
+from bs4 import BeautifulSoup
+
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
@@ -10,9 +12,6 @@ driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
 
 
 def return_search_results(query_text):
-    options = webdriver.ChromeOptions()
-    options.add_argument(r"user-data-dir=chrome_data/")
-    driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
     driver.get("https://twitter.com/explore")
 
     form = WebDriverWait(driver, 10).until(
@@ -38,5 +37,12 @@ def find_tweets(driver, num_loops=10):
     return all_tweets
 
 
-# driver = return_search_results("Dhruva Bansal?")
-# print(driver.page_source)
+def get_all_search_tweets(query_text):
+    driver = return_search_results(query_text)
+    WebDriverWait(driver, 10).until(
+        EC.visibility_of_element_located((By.TAG_NAME, "article"))
+    )
+    return find_tweets(driver)
+
+
+print(get_all_search_tweets("Silicon Valley Bank"))
