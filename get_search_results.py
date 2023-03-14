@@ -1,7 +1,7 @@
-from bs4 import BeautifulSoup
 import time
 from urllib.parse import quote
 
+from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
@@ -21,7 +21,6 @@ def return_search_results(query_text):
     )
     form.send_keys(query_text)
     form.submit()
-    return driver
 
 
 def find_tweets(driver, num_loops=10):
@@ -30,7 +29,7 @@ def find_tweets(driver, num_loops=10):
         bs = BeautifulSoup(driver.page_source)
         articles = bs.find_all("article")
         for article in articles:
-            l = article.find_all("span")[4].parent.find_all("span")
+            l = article.find("div", {"data-testid": "tweetText"}).find_all("span")
             l = [i.text for i in l]
             tweet = "".join(l)
             if tweet not in all_tweets:
@@ -40,7 +39,7 @@ def find_tweets(driver, num_loops=10):
 
 
 def get_all_search_tweets(query_text):
-    driver = return_search_results(query_text)
+    return_search_results(query_text)
     WebDriverWait(driver, 10).until(
         EC.visibility_of_element_located((By.TAG_NAME, "article"))
     )
