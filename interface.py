@@ -1,5 +1,6 @@
 import gradio as gr
 
+from functools import partial
 from get_search_results import *
 
 with gr.Blocks() as demo:
@@ -21,6 +22,10 @@ with gr.Blocks() as demo:
             with gr.Row():
                 for j in range(i, min(i + 5, len(topics))):
                     button_i = gr.Button(topics[j])
+                    button_i.click(
+                        fn=partial(generate_trending_topic_summary, topics[j]),
+                        outputs=topic_summary_output,
+                    )
 
     with gr.Tab("User Summary"):
         username_input = gr.Textbox(label="Username to summarize")

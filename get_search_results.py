@@ -130,7 +130,7 @@ def generate_bio(username):
     return request_result.completions[0].text.replace("\n", "")
 
 
-def generate_trending_topic_summary(topic):
+def generate_trending_topic_summary(topic, dummy):
     tweets = get_all_tweets_for_trending_topic(topic)
     return generate_tweet_summary(topic, tweets)
 
