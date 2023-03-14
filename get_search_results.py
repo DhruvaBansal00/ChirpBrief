@@ -79,5 +79,14 @@ def get_all_tweets_for_trending_topic(topic):
     return find_tweets(driver)
 
 
-all_topics = get_all_topics_from_trending()
-print(get_all_tweets_for_trending_topic(all_topics[1]))
+def get_all_tweets_for_user(user_name):
+    driver.get(f"https://twitter.com/{user_name}")
+    WebDriverWait(driver, 10).until(
+        EC.visibility_of_element_located((By.TAG_NAME, "article"))
+    )
+    return find_tweets(driver)
+
+
+# all_topics = get_all_topics_from_trending()
+# print(get_all_tweets_for_trending_topic(all_topics[1]))
+print(get_all_tweets_for_user("elonmusk"))
