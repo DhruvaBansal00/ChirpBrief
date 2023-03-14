@@ -87,6 +87,24 @@ def get_all_tweets_for_user(user_name):
     return find_tweets(driver)
 
 
+def generate_tweet_summary(tweets):
+    tweet_list_concat = " ".join(tweets)
+    prompt = f"Generate a 5 line summary of the following tweets: {tweet_list_concat}"
+    # query  gpt3/chatgpt
+
+
+def generate_tweet_summary_for_user(tweets, username):
+    tweet_list_concat = " ".join(tweets)
+    prompt = f"Generate a 5 line summary of the following tweets posted by {username}: {tweet_list_concat}"
+    # query  gpt3/chatgpt
+
+
+def generate_bio(tweets, username):
+    tweet_list_concat = " ".join(tweets)
+    prompt = f"Generate a twitter bio for {username} who has tweeted the following: {tweet_list_concat}"
+    # query  gpt3/chatgpt
+
+
 # all_topics = get_all_topics_from_trending()
 # print(get_all_tweets_for_trending_topic(all_topics[1]))
-print(get_all_tweets_for_user("elonmusk"))
+# print(get_all_tweets_for_user("elonmusk"))
