@@ -81,7 +81,7 @@ def get_all_topics_from_trending(tab_name: str = "trending"):
         l = query.find_all("span")
         if len(l) > 3:
             all_keywords.append(l[3].text.replace("\n", ""))
-    return all_keywords
+    return all_keywords[:30]
 
 
 def get_all_tweets_for_trending_topic(topic):
