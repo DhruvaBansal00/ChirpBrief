@@ -1,4 +1,6 @@
 from bs4 import BeautifulSoup
+import time
+from urllib.parse import quote
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -45,4 +47,37 @@ def get_all_search_tweets(query_text):
     return find_tweets(driver)
 
 
-print(get_all_search_tweets("Silicon Valley Bank"))
+def get_all_topics_from_trending(tab_name: str = "trending"):
+    driver.get(f"https://twitter.com/explore/tabs/{tab_name}")
+    WebDriverWait(driver, 10).until(
+        EC.visibility_of_element_located(
+            (By.CSS_SELECTOR, "[aria-label='Timeline: Explore']")
+        )
+    )
+
+    bs = BeautifulSoup(driver.page_source)
+    all_relevant_queries = bs.find_all(
+        "div", {"class": "css-1dbjc4n r-1adg3ll r-1ny4l3l"}
+    )
+    all_keywords = []
+    for query in all_relevant_queries:
+        l = query.find_all("span")
+        if len(l) > 3:
+            all_keywords.append(l[3].text.replace("\n", ""))
+    return all_keywords
+
+
+def get_all_tweets_for_trending_topic(topic):
+    topic_url_save = quote(topic)
+    url = (
+        f"https://twitter.com/search?q={topic_url_save}&src=trend_click&vertical=trends"
+    )
+    driver.get(url)
+    WebDriverWait(driver, 10).until(
+        EC.visibility_of_element_located((By.TAG_NAME, "article"))
+    )
+    return find_tweets(driver)
+
+
+all_topics = get_all_topics_from_trending()
+print(get_all_tweets_for_trending_topic(all_topics[1]))
