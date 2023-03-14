@@ -1,6 +1,6 @@
 import time
 from urllib.parse import quote
-
+import openai
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -11,6 +11,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 options = webdriver.ChromeOptions()
 options.add_argument(r"user-data-dir=chrome_data/")
 driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
+openai.api_key = "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"
 
 
 def return_search_results(query_text):
@@ -89,19 +90,61 @@ def get_all_tweets_for_user(user_name):
 def generate_tweet_summary(tweets):
     tweet_list_concat = " ".join(tweets)
     prompt = f"Generate a 5 line summary of the following tweets: {tweet_list_concat}"
-    # query  gpt3/chatgpt
+    return (
+        openai.Completion.create(
+            model="text-davinci-003",
+            prompt=prompt,
+            max_tokens=512,
+            temperature=0,
+        )
+        .choices[0]
+        .text
+    )
 
 
-def generate_tweet_summary_for_user(tweets, username):
+def generate_tweet_summary_for_user(username):
+    tweets = get_all_tweets_for_user(username)
     tweet_list_concat = " ".join(tweets)
     prompt = f"Generate a 5 line summary of the following tweets posted by {username}: {tweet_list_concat}"
-    # query  gpt3/chatgpt
+    return (
+        openai.Completion.create(
+            model="text-davinci-003",
+            prompt=prompt,
+            max_tokens=512,
+            temperature=0,
+        )
+        .choices[0]
+        .text
+    )
 
 
-def generate_bio(tweets, username):
+def generate_bio(username):
+    tweets = get_all_tweets_for_user(username)
     tweet_list_concat = " ".join(tweets)
     prompt = f"Generate a twitter bio for {username} who has tweeted the following: {tweet_list_concat}"
-    # query  gpt3/chatgpt
+    return (
+        openai.Completion.create(
+            model="text-davinci-003",
+            prompt=prompt,
+            max_tokens=512,
+            temperature=0,
+        )
+        .choices[0]
+        .text
+    )
+
+
+def generate_trending_topic_summary(topic):
+    tweets = get_all_tweets_for_trending_topic(topic)
+    return generate_tweet_summary(tweets)
+
+
+def generate_query_summary(query_text):
+    tweets = get_all_search_tweets(query_text)
+    return generate_tweet_summary(tweets)
+
+
+print(generate_query_summary("Silicon Valley Bank"))
 
 
 # all_topics = get_all_topics_from_trending()
