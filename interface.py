@@ -1,7 +1,53 @@
+import pickle
+from functools import partial
+
 import gradio as gr
 
-from functools import partial
 from get_search_results import *
+
+topic_to_user_dict = pickle.load(open("topic_to_user.pkl", "rb"))
+
+
+def find_users_for_topic(ind, list_of_topics):
+    print(list_of_topics)
+    print(ind)
+    text = "# Users for topic:\n"
+    return text + "\n".join(
+        [
+            f"{i+1}. [{username}](http://twitter.com/{username})"
+            for i, username in enumerate(topic_to_user_dict[list_of_topics[ind]])
+        ]
+    )
+
+
+def generate_topics_for_user(username):
+    topics = generate_topic_tags(username)
+    topics = topics.replace("#", "").split(",")
+    topics = [i.strip() for i in topics]
+    filtered_topics = []
+    for topic in topics:
+        if topic in topic_to_user_dict:
+            filtered_topics.append(topic)
+    filtered_topics = [
+        (len(topic_to_user_dict[topic]), topic) for topic in filtered_topics
+    ]
+    filtered_topics.sort(reverse=True)
+    filtered_topics = [topic for _, topic in filtered_topics]
+    button_changes = []
+    list_of_topics = []
+    for topic in filtered_topics:
+        if len(button_changes) >= 5:
+            break
+        if topic in topic_to_user_dict:
+            button_changes.append(gr.update(value=topic, visible=True))
+            list_of_topics.append(topic)
+    print(topics)
+    print(filtered_topics)
+    print(list_of_topics)
+    while len(button_changes) < 5:
+        button_changes.append(gr.update(value="-"))
+    return [list_of_topics] + button_changes
+
 
 with gr.Blocks() as demo:
     gr.Markdown("Flip text or image files using this demo.")
@@ -45,6 +91,33 @@ with gr.Blocks() as demo:
             fn=generate_bio,
             inputs=bio_username_input,
             outputs=bio_username_output,
+        )
+
+    with gr.Tab("Discover usernames"):
+        discover_username_input = gr.Textbox(
+            label="Username similar to which we want usernames"
+        )
+        username_button = gr.Button("Find topics for this user")
+        user_topics = gr.State([])
+        l = []
+        with gr.Row():
+            for i in range(5):
+                button_i = gr.Button("-", visible=False)
+                l.append(button_i)
+        topic_summary_output = gr.Markdown("# Users for topic:")
+        for i, button_i in enumerate(l):
+            button_i.click(
+                fn=partial(
+                    find_users_for_topic,
+                    i,
+                ),
+                inputs=user_topics,
+                outputs=topic_summary_output,
+            )
+        username_button.click(
+            fn=generate_topics_for_user,
+            inputs=discover_username_input,
+            outputs=[user_topics] + l,
         )
 
 demo.launch()
