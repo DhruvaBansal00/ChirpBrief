@@ -25,7 +25,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 options = webdriver.ChromeOptions()
 options.add_argument(r"user-data-dir=chrome_data/")
 driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
-api_key = "iMNfpmV6ziCZvzCe50gyjks7QVMEuLBw"
+api_key = "GepwVcV7SYDnVOQTeKcrZ19iNCaKfsdw"
 auth = Authentication(api_key=api_key)
 service = RemoteService("https://crfm-models.stanford.edu")
 
