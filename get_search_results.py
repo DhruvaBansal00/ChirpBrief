@@ -131,6 +131,15 @@ def generate_bio(username):
     return request_result.completions[0].text.replace("\n", "")
 
 
+def generate_topic_tags(username):
+    tweets = get_all_tweets_for_user(username)
+    tweet_list_concat = " ".join(tweets)
+    prompt = f"Generate a list of topic keywords for the following tweets: {tweet_list_concat}. Keywords: "
+    request = Request(model="openai/text-davinci-003", prompt=prompt, max_tokens=1024)
+    request_result = service.make_request(auth, request)
+    return request_result.completions[0].text.replace("\n", "")
+
+
 def generate_trending_topic_summary(topic, dummy):
     tweets = get_all_tweets_for_trending_topic(topic)
     return generate_tweet_summary(topic, tweets)
